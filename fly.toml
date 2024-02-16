@@ -3,15 +3,19 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
+# The name of our application and primary_region (Seattle)
 app = "bitebook"
 primary_region = "sea"
 
+# Defines the buildpack
 [build]
   builder = "paketobuildpacks/builder:base"
 
+# Set env variable to port number the application shoud listen to
 [env]
   PORT = "8080"
 
+# Configures specifics 
 [http_service]
   internal_port = 8080
   force_https = true

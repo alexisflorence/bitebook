@@ -1,3 +1,7 @@
+# Python Flask application that integrates our various services
+# Including Google Cloud Storage
+# OpenAI 
+# Potentially Google Sheets for data handling 
 from flask import Flask, request, render_template, redirect, url_for, jsonify
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, set_access_cookies, verify_jwt_in_request, unset_jwt_cookies
 from werkzeug.utils import secure_filename
@@ -14,6 +18,15 @@ from dotenv import load_dotenv
 import base64
 import pytz
 
+'''
+Key Functionalities:
+    User Authentication: Using JWT for securing routes and managing sessions.
+    File Handling: Uploading images to Google Cloud Storage and generating public URLs for access.
+    AI Integration: Using OpenAI's API to perform tasks, likely related to image or data analysis.
+    ata Logging: Potentially logging analysis results or other data in a Google Sheet
+'''
+
+# Checks if the application is running in development mode & loads env variables from .env
 if os.getenv('FLASK_ENV') == 'development':
     load_dotenv()
 
@@ -29,6 +42,7 @@ with open(temp_credentials_path, "wb") as temp_file:
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = temp_credentials_path
 
 # Flask app configuration
+# JSON Web Tokens for authentication
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET')
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
@@ -40,7 +54,7 @@ app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 # Initialize JWT Manager
 jwt = JWTManager(app)
 
-# Mock user database
+# Mock user database, mapping usernames to passwords
 USERS = {
     "user": os.getenv('USER_PW')
 }
@@ -122,13 +136,17 @@ def clean_json_string(s):
         print("No JSON object found.")
         return None
 
-# Routes
+# Flask Routes
+
+# The main page of the application, accessible only if the user is logged in
 @app.route('/')
 def index():
     if not is_logged_in():
         return redirect(url_for('login'))
     return render_template('index.html')
 
+# handles both displaying the login form and processing login attempts
+# verifies the user credentials against the mock database
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -144,12 +162,17 @@ def login():
             return "Invalid credentials", 401
     return render_template('login.html')
 
+# Logs out the user by clearing JWT cookies
 @app.route('/logout', methods=['POST'])
 def logout():
     resp = jsonify({'logout': True})
     unset_jwt_cookies(resp)  # This will remove the JWT cookies
     return resp, 302, {'Location': url_for('login')}
 
+# A protected route that processes image uploads
+# stores the uploaded image in Google Cloud Storage generates a public URL for the image
+# and potentially analyzes the image or associated data using OpenAI
+# the route builds a prompt for OpenAI's API, analyze the response, and integrate with Google Sheets
 @app.route('/upload', methods=['POST'])
 @jwt_required()
 def upload_image():
@@ -214,6 +237,8 @@ def upload_image():
         return f'<div id="response" class="font-mono"> Added <a href="{image_url}" class="mt-4 font-mono text" target="_blank">{estimates["Food Name"]}</a> to the spreadsheet.</div>', 200
     return f'<div id="response" class="font-mono">Error no photo provided.</div>', 400
 
+# specifies the default port and runs the flask application
+# making it accessible over the network
 if __name__ == '__main__':
     port = int(os.getenv('PORT', '8080'))
     app.run(host='0.0.0.0', port=port, debug=True)
