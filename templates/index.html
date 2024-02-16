@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bitebook</title>
+    <link rel="manifest" href="/static/manifest.json">
+    <link href="static/css/output.css" rel="stylesheet" />
+
+    <!-- Spinner CSS -->
+    <style>
+      .loader {
+        border: 5px solid #f3f4f6;
+        /* Light grey */
+        border-top: 3px solid #22c55e;
+        /* Blue */
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50 flex flex-col justify-between h-svh">
+    <div class="mt-20 mb-20 flex flex-col items-center justify-center flex-1">
+      <div class="bg-gray-50 p-8 rounded-lg w-11/12 max-w-2xl">
+        <h1 class="font-mono text-3xl text-gray-800 mb-4 text-center">
+          bitebook
+        </h1>
+        <form
+          action="/upload"
+          method="post"
+          enctype="multipart/form-data"
+          class="flex flex-col items-center"
+          hx-post="/upload"
+          hx-target="#response"
+          hx-swap="outerHTML"
+          hx-indicator="#loadingSpinner"
+        >
+          <label class="block mb-4 w-full">
+            <span class="sr-only">Upload photo</span>
+            <input
+              type="file"
+              name="file"
+              accept="image/*"
+              class="block w-full text-sm font-mono p-2 rounded-lg focus:outline-none"
+            />
+          </label>
+          <!-- Details Textarea -->
+          <textarea
+            name="details"
+            placeholder="Add title and details here..."
+            class="block w-full text-sm font-mono p-2 mb-4 rounded-lg border-2 border-gray-200 focus:border-emerald-500 focus:outline-none"
+            rows="4"
+          ></textarea>
+          <button
+            type="submit"
+            class="w-full mb-4 bg-emerald-500 font-mono text-white py-2 rounded-lg hover:bg-emerald-600 focus:outline-none"
+          >
+            upload
+          </button>
+        </form>
+
+        <!-- Spinner element -->
+        <div id="response" class="mt-4"></div>
+      </div>
+    </div>
+    <div class="flex justify-center items-center">
+    <div
+      id="loadingSpinner"
+      class="loader htmx-indicator pb-4 mb-4"
+    ></div>
+    </div>
+    <!-- Logout Button -->
+    <div class="pb-4 text-center">
+      <form action="/logout" method="post" hx-post="/logout" hx-target="body">
+        <button
+          type="submit"
+          class="bg-cyan-500 hover:bg-cyan-700 font-mono text-xs text-white py-2 px-4 rounded-full"
+        >
+          bye
+        </button>
+      </form>
+    </div>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script>
+      document.addEventListener('htmx:configRequest', function (event) {
+        var csrfToken = getCookie('csrf_access_token') // Fetching the CSRF token from cookies
+        if (csrfToken) {
+          event.detail.headers['X-CSRF-TOKEN'] = csrfToken
+        } else {
+          console.error('CSRF token not found')
+        }
+      })
+
+      function getCookie(name) {
+        var value = '; ' + document.cookie
+        var parts = value.split('; ' + name + '=')
+        if (parts.length == 2) return parts.pop().split(';').shift()
+      }
+
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/static/sw.js').then((registration) => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, (err) => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
