@@ -1,8 +1,18 @@
+# List of the Python package dependencies required for this project
+
+# Flask is a Web Server Gateway Interface web application framework
 Flask==3.0.2
+# Extension for Flask that adds support for JSON 
 Flask-JWT-Extended==4.6.0
+# Allows application to interact with Google Cloud Storage
 google-cloud-storage==2.14.0
+# Used for Google OAuth2 authentication (Google Sign-In)
 google-auth==2.27.0
+# Client library for accessing Google APIs(Drive, Gmail, Youtube)
 google-api-python-client==2.117.0
+# OpenAI Python client library providing a way to interact with GPT
 openai==1.12.0
+# Reads key-value pairs from a .env file useful for managing App settings
 python-dotenv==1.0.1
+# Python HTTP server for UNIX common for deployment of Flask
 gunicorn==21.2.0
