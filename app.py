@@ -175,6 +175,7 @@ def logout():
 # the route builds a prompt for OpenAI's API, analyze the response, and integrate with Google Sheets
 @app.route('/upload', methods=['POST'])
 @jwt_required()
+
 def upload_image():
     image_file = request.files.get('file')
     details = request.form.get('details', '')
@@ -185,7 +186,9 @@ def upload_image():
         date_path = datetime.now(seattle).strftime('%Y-%m-%d')
         blob = bucket.blob(f"{date_path}/{int(round(datetime.now().timestamp()))}")
         blob.upload_from_string(image_file.read(), content_type=image_file.content_type)
+        #blob.make_public()
         image_url = blob.public_url
+        print(image_url)
 
         # Call OpenAI Vision API
         response = openai_client.chat.completions.create(
@@ -213,7 +216,7 @@ def upload_image():
         # Google Sheets API to store image URL, description, and user details
         service = build('sheets', 'v4', credentials=Credentials.from_service_account_file(
             os.getenv('GOOGLE_APPLICATION_CREDENTIALS')), cache_discovery=False)
-        SPREADSHEET_ID = '1S6voF1xCdGUxV6EBJygBnE-wEIN5HbDtjTTwcVjAkVs'
+        SPREADSHEET_ID = '1Ten82u29-uVFVLEqz9W-GpbDcgv6g-nr_3m-2rFKL6c'
         estimates = {key: nutritional_info.get(key, expected_response_format[key]) for key in expected_response_format.keys()}
         #formula = f"=HYPERLINK(\"{image_url}\", IMAGE(\"{image_url}\", 4, 96, 72))"
         values_row = [date_path]
@@ -233,6 +236,7 @@ def upload_image():
             body=body,
             insertDataOption='INSERT_ROWS'
         ).execute()
+
 
         return f'<div id="response" class="font-mono"> Added <a href="{image_url}" class="mt-4 font-mono text" target="_blank">{estimates["Food Name"]}</a> to the spreadsheet.</div>', 200
     return f'<div id="response" class="font-mono">Error no photo provided.</div>', 400
