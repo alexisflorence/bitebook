@@ -2,7 +2,11 @@
 
 ## Overview
 
-BiteBook is a dynamic web application designed to connect food enthusiasts from around the globe. Built with Flask, it leverages TailwindCSS for styling, Google Cloud Storage for data handling, and OpenAI's GPT for generating creative content. Whether you're sharing recipes, exploring culinary arts, or just browsing for your next meal inspiration, BiteBook offers a platform for all things food.
+BiteBook is more than just a dynamic web application for food lovers; it's a personal project born out of a need to support my brother during his expereince with Hodgkin's Lymphoma. As he undergoes a stem cell transplant, a crucial part of his recovery involves meticulously logging his dietary intake for his nutritionist. This necessity sparked the creation of BiteBook.
+
+Developed using Flask and styled with TailwindCSS, BiteBook is designed to make the process of tracking and logging food intake as seamless and supportive as possible. It utilizes Google Cloud Storage for robust data management and leverages OpenAI's GPT to generate creative, nutritious meal suggestions tailored to specific dietary needs.
+
+While BiteBook serves a critical role in my brother's recovery journey, offering a specialized platform for him to log his meals and monitor his nutrition, it also invites food enthusiasts from around the world to explore culinary arts, share recipes, and find their next meal inspiration. Whether you're in a similar health situation, looking to manage your diet, or simply passionate about food, BiteBook provides a comprehensive platform for all things related to food and nutrition.
 
 ## Features
 
@@ -25,7 +29,7 @@ BiteBook is a dynamic web application designed to connect food enthusiasts from 
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/bitebook-main.git
+git clone https://github.com/alexisflorence/bitebook-main.git
 cd bitebook-main
 ```
 
