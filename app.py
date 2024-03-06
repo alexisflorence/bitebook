@@ -73,7 +73,7 @@ def is_logged_in():
         return True
     except:
         return False
-
+# expected format for google sheet
 expected_response_format = {
     "Food Name": "N/A",
     "Calories (kcal)": "N/A",
